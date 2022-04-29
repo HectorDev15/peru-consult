@@ -66,4 +66,66 @@ class Ruc implements RucInterface
 
         return $html === false ? null : $this->parser->parse($html);
     }
+
+    /**
+     * Get RUC by CE.
+     *
+     * @param string $ce
+     * @param string $type
+     *
+     * @return null|array
+     */
+    public function getRucsByDoc(string $ce, string $type): ?array
+    {
+        $this->client->get(Endpoints::CONSULT);
+        $htmlRandom = $this->client->post(Endpoints::CONSULT, [
+            'accion' => 'consPorRazonSoc',
+            'razSoc' => 'BVA FOODS',
+        ]);
+
+        $random = $this->getRandom($htmlRandom);
+
+        $html = $this->client->post(Endpoints::CONSULT, [
+            'accion' => 'consPorTipdoc',
+            'rbtnTipo' => '2',
+            'tipdoc' => $type,
+            'nrodoc' => $ce,
+            'search2' => $ce,
+            'numRnd' => $random,
+            'actReturn' => '1',
+            'modo' => '1',
+        ]);
+
+        return $this->parser->parseRuc($html);
+    }
+
+    /**
+     * Get Deuda Coactiva.
+     *
+     * @param string $ruc
+     *
+     * @return null|array
+     */
+    public function getRucDeudaCoactiva(string $ruc): ?array
+    {
+        $this->client->get(Endpoints::CONSULT);
+        $htmlRandom = $this->client->post(Endpoints::CONSULT, [
+            'accion' => 'consPorRazonSoc',
+            'razSoc' => 'BVA FOODS',
+        ]);
+
+        $random = $this->getRandom($htmlRandom);
+
+        $html = $this->client->post(Endpoints::CONSULT, [
+            'accion' => 'getInfoDC',
+            'nroRuc' => $ruc,
+            'numRnd' => $random,
+            'actReturn' => '1',
+            'modo' => '1',
+        ]);
+
+        $parse = $this->parser->parseDeuda($html);
+
+        return $parse;
+    }
 }

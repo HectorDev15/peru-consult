@@ -48,6 +48,51 @@ class RucParser
         return $this->getCompany($dic);
     }
 
+    public function parseRuc(string $html): ?array
+    {
+        if (empty($html)) {
+            return null;
+        }
+
+        $dic = $this->parser->parse($html);
+
+        if (false === $dic) {
+
+            return null;
+        }
+
+        $rucs = [];
+        if (count($dic) > 0) {
+            foreach ($dic as $key => $value) {
+                $pos = strpos($key, ' ');
+
+                $isRuc = trim(substr($key, 0, $pos));
+                if ($isRuc === 'RUC:') {
+                    $rucs[] = trim(substr($key, $pos + 1));
+                }
+            }
+            $dic = $rucs;
+        }
+        
+        return $dic;
+    }
+
+    public function parseDeuda(string $html): ?array
+    {
+        if (empty($html)) {
+            return null;
+        }
+
+        $dic = $this->parser->parseDeuda($html);
+
+        if (false === $dic) {
+
+            return null;
+        }
+
+        return $dic;
+    }
+
     /**
      * @param array<string, mixed> $items
      * @return Company
