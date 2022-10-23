@@ -73,7 +73,7 @@ class RucParser
             }
             $dic = $rucs;
         }
-        
+
         return $dic;
     }
 
@@ -128,6 +128,7 @@ class RucParser
         $cp->nombreComercial = $items['Nombre Comercial:'] ?? '';
         $cp->telefonos = [];
         $cp->tipo = $items['Tipo Contribuyente:'] ?? '';
+        $cp->tipoDocumento = $items['Tipo de Documento:'] ?? '';
         $cp->estado = $items['Estado del Contribuyente:'] ?? $items['Estado:'];
         $cp->condicion = $this->getFirstLine($items['Condición del Contribuyente:'] ?? $items['Condición:']);
         $cp->direccion = $items['Domicilio Fiscal:'] ?? $items['Dirección del Domicilio Fiscal:'];
@@ -152,7 +153,7 @@ class RucParser
 
         $date = DateTime::createFromFormat('d/m/Y', $text);
 
-        return false === $date ? null : $date->format('Y-m-d').'T00:00:00.000Z';
+        return false === $date ? null : $date->format('Y-m-d') . 'T00:00:00.000Z';
     }
 
     private function getFirstLine(string $text): string
@@ -174,7 +175,7 @@ class RucParser
         $updateFechaBaja = count($validLines) === 3 && $company->fechaBaja === null;
 
         $company->estado = $validLines[0];
-        $company->fechaBaja = $updateFechaBaja ? $this->parseDate($validLines[2]): $company->fechaBaja;
+        $company->fechaBaja = $updateFechaBaja ? $this->parseDate($validLines[2]) : $company->fechaBaja;
     }
 
     private function filterValidLines(array $lines): Generator
@@ -184,7 +185,7 @@ class RucParser
             if ($value === '') {
                 continue;
             }
-           yield $value;
+            yield $value;
         }
     }
 

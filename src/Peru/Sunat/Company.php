@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Administrador
@@ -35,6 +36,10 @@ class Company implements JsonSerializable
      * @var string
      */
     public $tipo;
+    /**
+     * @var string
+     */
+    public $tipoDocumento;
     /**
      * @var string
      */
