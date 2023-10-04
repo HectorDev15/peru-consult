@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Administrador
@@ -125,6 +126,35 @@ class Ruc implements RucInterface
         ]);
 
         $parse = $this->parser->parseDeuda($html);
+
+        return $parse;
+    }
+
+    /**
+     * Get Representantes Legales.
+     *
+     * @param string $ruc
+     *
+     * @return null|array
+     */
+    public function getRucRepresentantes(string $ruc): ?array
+    {
+        $company = $this->get($ruc);
+        $parse = [];
+
+        if ($company) {
+            $razon = $company->razonSocial;
+
+            $html = $this->client->post(Endpoints::CONSULT, [
+                'accion' => 'getRepLeg',
+                'nroRuc' => $ruc,
+                'contexto' => 'ti-it',
+                'desRuc' => $razon,
+                'modo' => '1',
+            ]);
+
+            $parse = $this->parser->parseRepresentante($html);
+        }
 
         return $parse;
     }

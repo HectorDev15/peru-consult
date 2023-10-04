@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Giansalex
@@ -31,7 +32,8 @@ class RucTest extends TestCase
     {
         $this->cs = new Ruc(
             new ClientStubDecorator(new EmptyResponseDecorator(new CurlClient())),
-            new RucParser(new HtmlRecaptchaParser()));
+            new RucParser(new HtmlRecaptchaParser())
+        );
     }
 
     /**
@@ -91,5 +93,13 @@ class RucTest extends TestCase
             ['20493919271'], // MADRE DE DIOS
             ['20146806679'], // SAN MARTIN
         ];
+    }
+
+    public function testRepresentanteRuc()
+    {
+        $cs = new Ruc(new CurlClient(), new RucParser(new HtmlRecaptchaParser()));
+        $representantes = $cs->getRucRepresentantes('20440374248');
+
+        $this->assertNotEmpty($representantes);
     }
 }

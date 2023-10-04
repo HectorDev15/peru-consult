@@ -93,6 +93,22 @@ class RucParser
         return $dic;
     }
 
+    public function parseRepresentante(string $html): ?array
+    {
+        if (empty($html)) {
+            return null;
+        }
+
+        $dic = $this->parser->parseRepresentante($html);
+
+        if (false === $dic) {
+
+            return null;
+        }
+
+        return $dic;
+    }
+
     /**
      * @param array<string, mixed> $items
      * @return Company

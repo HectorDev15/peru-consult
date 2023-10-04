@@ -38,7 +38,7 @@ class HtmlRecaptchaParser implements HtmlParserInterface
         $xp = XpathLoader::getXpathFromHtml($html);
         $table = $xp->query("//table");
         $noDeuda = $xp->query("/html/body/div/div[3]/div[2]/div/div");
-        
+
         if ($noDeuda->length == 1) {
             return ['No se ha remitido deuda en cobranza coactiva que corresponda al contribuyente consultado.'];
         }
@@ -49,6 +49,22 @@ class HtmlRecaptchaParser implements HtmlParserInterface
         $nodes = $table->item(0)->childNodes;
 
         $res = $this->getDeuda($nodes, $xp);
+
+        return $res;
+    }
+
+    public function parseRepresentante(string $html)
+    {
+        $xp = XpathLoader::getXpathFromHtml($html);
+        $table = $xp->query("//table");
+
+        if (0 == $table->length) {
+            return false;
+        }
+
+        $nodes = $table->item(0)->childNodes;
+
+        $res = $this->getRepresentante($nodes, $xp);
 
         return $res;
     }
@@ -127,6 +143,43 @@ class HtmlRecaptchaParser implements HtmlParserInterface
                     $values[$keys[$key]] = $value;
                 }
                 $res[] = $values;
+            }
+            $dic = $res;
+        }
+
+        return $dic;
+    }
+
+    private function getRepresentante(DOMNodeList $nodes, DOMXPath $xp): array
+    {
+        $dic = [];
+
+        foreach ($nodes as $item) {
+            /** @var $item DOMNode */
+            if ($this->isNotElement($item)) {
+                continue;
+            }
+
+            $dic[] = iterator_to_array($this->getValuesFromTable($xp, $item));
+        }
+
+        if (count($dic) > 0) {
+            $keys = [];
+            $res = [];
+            foreach ($dic as $k => $val) {
+                if ($k === 0) {
+                    $keys = $val;
+                    continue;
+                }
+                $values = [];
+                $val = array_chunk($val, count($keys));
+                foreach ($val as $v) {
+                    $values = [];
+                    foreach ($v as $key => $value) {
+                        $values[$keys[$key]] = $value;
+                    }
+                    $res[] = $values;
+                }
             }
             $dic = $res;
         }
